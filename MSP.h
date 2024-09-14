@@ -24,6 +24,38 @@
 #include <Arduino.h>
 #include <Stream.h>
 
+#define MSP2_SENSOR_GPS                 0x1F03
+
+
+
+struct msp_gps_data_message_t {
+    uint8_t  instance;                  // sensor instance number to support multi-sensor setups
+    uint16_t gps_week;                   // GPS week, 0xFFFF if not available
+    uint32_t ms_tow;
+    uint8_t  fix_type;
+    uint8_t  satellites_in_view;
+    uint16_t horizontal_pos_accuracy;     // [cm]
+    uint16_t vertical_pos_accuracy;       // [cm]
+    uint16_t horizontal_vel_accuracy;     // [cm/s]
+    uint16_t hdop;
+    int32_t  longitude;
+    int32_t  latitude;
+    int32_t  msl_altitude;       // cm
+    int32_t  ned_vel_north;       // cm/s
+    int32_t  ned_vel_east;
+    int32_t  ned_vel_down;
+    uint16_t ground_course;      // deg * 100, 0..36000
+    uint16_t true_yaw;           // deg * 100, values of 0..36000 are valid. 65535 = no data available
+    uint16_t year;
+    uint8_t  month;
+    uint8_t  day;
+    uint8_t  hour;
+    uint8_t  min;
+    uint8_t  sec;
+
+} __attribute__ ((packed));
+
+
 // requests & replies 
 #define MSP_API_VERSION            1
 #define MSP_FC_VARIANT             2
@@ -355,8 +387,8 @@ struct msp_raw_gps_t {
   int32_t  lon;           // 1 / 10000000 deg
   int16_t  alt;           // meters
   int16_t  groundSpeed;   // cm/s
-  int16_t  groundCourse;  // unit: degree x 10
-  uint16_t hdop;
+//  int16_t  groundCourse;  // unit: degree x 10
+//  uint16_t hdop;
 } __attribute__ ((packed));
 
 
@@ -650,14 +682,14 @@ class MSP {
 
     // low level functions
 
-    void send(uint8_t messageID, void * payload, uint8_t size);
-    bool recv(uint8_t * messageID, void * payload, uint8_t maxSize, uint8_t * recvSize);    
+    void send(uint16_t messageID, void * payload, uint16_t size);
+    bool recv(uint16_t *messageID, void * payload, uint16_t maxSize, uint16_t *recvSize);
 
-    bool waitFor(uint8_t messageID, void * payload, uint8_t maxSize, uint8_t * recvSize = NULL);
+    bool waitFor(uint16_t messageID, void * payload, uint16_t maxSize, uint16_t *recvSize = NULL);
     
-    bool request(uint8_t messageID, void * payload, uint8_t maxSize, uint8_t * recvSize = NULL);
+    bool request(uint16_t messageID, void * payload, uint16_t maxSize, uint16_t *recvSize = NULL);
 
-    bool command(uint8_t messageID, void * payload, uint8_t size, bool waitACK = true);
+    bool command(uint16_t messageID, void * payload, uint16_t size, bool waitACK = true);
 
     void reset();
 
