@@ -55,7 +55,7 @@ char ssid[32];
   * CHANGEZ l'ID du drone par celui que Alphatango vous a fourni (Trigramme + Modèle + numéro série) !
 */
 //*********************** "000000000000000000000000000000"  // 30 caractères
-const char drone_id[31] = "000GRT000000000000000000000001";  // si l'id est inférieur à 30 caractères, le compléter avec des "0" au début
+const char drone_id[31] = "000000000000000000000000000000";  // si l'id est inférieur à 30 caractères, le compléter avec des "0" au début
 
 droneIDFR drone_idfr;
 
